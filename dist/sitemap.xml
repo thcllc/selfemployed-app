@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://selfemployed.app/</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://selfemployed.app/og.png</image:loc>
+      <image:title>SelfEmployed.app — Make self-employment an actual plan</image:title>
+      <image:caption>A transition platform for people becoming a microcompany of one.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://selfemployed.app/?demo=sarah</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://selfemployed.app/?demo=marcus</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://selfemployed.app/?demo=priya</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://selfemployed.app/?demo=alex</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

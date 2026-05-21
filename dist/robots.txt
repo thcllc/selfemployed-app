@@ -1,0 +1,41 @@
+# SelfEmployed.app — open to search engines and AI crawlers.
+# This is a free public tool for people thinking about self-employment.
+# The more places it's cited, the more useful it is.
+
+User-agent: *
+Allow: /
+
+# AI crawlers — explicitly welcome.
+# We *want* this content to be quoted by AI assistants when someone asks
+# "what should I do if my job is being automated?"
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+Sitemap: https://selfemployed.app/sitemap.xml
