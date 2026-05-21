@@ -1,0 +1,18 @@
+# Local server log
+/tmp/selfemployed-server.log
+
+# Playwright artifacts
+.playwright-mcp/
+
+# Wrangler
+.wrangler/
+
+# Local screenshots (kept out of repo; live URL has the rendered version)
+landing-hero.png
+diagnostic-top.png
+diagnostic-offer.png
+diagnostic-full.png
+command-center.png
+command-pipeline.png
+command-helpers.png
+live-public.png

@@ -1,0 +1,1673 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SelfEmployed.app — From displaced to independently earning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['Source Serif 4', 'ui-serif', 'Georgia', 'serif'],
+              sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+            },
+            colors: {
+              cream: {
+                50: '#FDFCF9',
+                100: '#FBFAF6',
+                200: '#F4F2EC',
+                300: '#E9E5DA',
+              },
+              ink: {
+                900: '#141414',
+                800: '#1F1F1F',
+                700: '#2D2D2D',
+                500: '#5C5C5C',
+                400: '#878582',
+                300: '#B5B2AB',
+              },
+              amber: {
+                700: '#B45309',
+                600: '#D97706',
+              },
+              forest: {
+                700: '#15532f',
+                600: '#1d6c3f',
+              },
+              rose: {
+                700: '#8B2C3F',
+              },
+            },
+            boxShadow: {
+              card: '0 1px 0 rgba(20,20,20,0.04), 0 1px 3px rgba(20,20,20,0.05)',
+              elev: '0 8px 30px rgba(20,20,20,0.08)',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html, body { background: #FBFAF6; color: #141414; }
+      body { font-family: 'Inter', sans-serif; }
+      .font-serif { font-feature-settings: "ss01", "ss02"; }
+      .hairline { border-color: #E9E5DA; }
+      .grain {
+        background-image:
+          radial-gradient(rgba(20,20,20,0.025) 1px, transparent 1px);
+        background-size: 3px 3px;
+      }
+      .fade-in { animation: fade .55s ease-out both; }
+      @keyframes fade { from { opacity: 0; transform: translateY(6px);} to {opacity:1; transform: none;} }
+      .pulse-dot { animation: pulse 1.6s ease-in-out infinite; }
+      @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+      .slow-spin { animation: spin 9s linear infinite; }
+      @keyframes spin { from { transform: rotate(0)} to { transform: rotate(360deg)} }
+      .underline-mark {
+        background-image: linear-gradient(transparent 62%, rgba(180,83,9,.22) 62%);
+        background-repeat: no-repeat;
+      }
+      details > summary { list-style: none; }
+      details > summary::-webkit-details-marker { display: none; }
+      .scrollshadow {
+        background:
+          linear-gradient(#FBFAF6 30%, rgba(251,250,246,0)) 0 0,
+          linear-gradient(rgba(251,250,246,0), #FBFAF6 70%) 0 100%,
+          radial-gradient(farthest-side at 50% 0, rgba(20,20,20,.08), transparent) 0 0,
+          radial-gradient(farthest-side at 50% 100%, rgba(20,20,20,.08), transparent) 0 100%;
+        background-size: 100% 24px, 100% 24px, 100% 8px, 100% 8px;
+        background-repeat: no-repeat;
+        background-attachment: local, local, scroll, scroll;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.3.1",
+          "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+          "lucide-react": "https://esm.sh/lucide-react@0.453.0?deps=react@18.3.1"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import React, { useState, useEffect, useRef } from 'react';
+      import { createRoot } from 'react-dom/client';
+      import {
+        ArrowRight, ArrowLeft, ArrowUpRight, Check, X, ChevronRight, ChevronDown,
+        FileText, Briefcase, Compass, Target, Wallet, Calendar, Mail, Phone,
+        Sparkles, ShieldAlert, ShieldCheck, AlertTriangle, Lightbulb, ClipboardCheck,
+        TrendingUp, Users, Building2, Stethoscope, ShoppingBag, Wrench, GraduationCap,
+        Clock, MapPin, Hash, DollarSign, Receipt, Send, Plus, Pencil, MoreHorizontal,
+        Search, Loader2, BookOpen, Pen, Coffee, MessageSquare, BadgeCheck, CircleDot,
+        ChevronUp,
+      } from 'lucide-react';
+
+      const e = React.createElement;
+
+      // ─────────────────────────────────────────────────────────────────
+      // PERSONAS — the 4 demo profiles that show the horizontal range
+      // ─────────────────────────────────────────────────────────────────
+      const PERSONAS = {
+        sarah: {
+          id: 'sarah',
+          name: 'Sarah Chen',
+          age: 33,
+          location: 'Austin, TX',
+          last_role: 'Senior CX Manager',
+          last_company: 'Mid-size B2B SaaS (Series C)',
+          tenure: '8 years in customer support, last 4 in leadership',
+          situation: 'Laid off 6 weeks ago after a 22% RIF that hit the support org hardest.',
+          income_goal: '$5,000 / month within 90 days',
+          hours: '30+ hours/week',
+          risk: 'Moderate — has 4 months of runway',
+          resume_snippet: `Senior Customer Experience Manager — Helix Software (2022–2026)
+• Built and led 14-person support team across 3 time zones
+• Designed AI-assisted triage that cut median response time from 14h to 2.3h
+• Owned NPS program; lifted from 38 to 61 over 18 months
+• Liaison with Product on UX issues surfaced through tickets
+
+Earlier: Support Lead → Senior Support Specialist (Helix, Asana, Zendesk partner) — 2018–2022`,
+          risk_profile: {
+            level: 'Moderate',
+            color: 'amber',
+            commoditizing: [
+              'First-touch ticket response (most modern helpdesks now ship AI deflection)',
+              'Macro/template writing — LLMs do this in seconds',
+              'Routine triage and tagging',
+            ],
+            defensible: [
+              'Designing the human-AI handoff inside a support org (you\'ve done it, most companies haven\'t)',
+              'Translating product friction into roadmap input — pattern recognition AI can\'t fake',
+              'Calibrating tone and escalation judgment for high-trust accounts',
+            ],
+            note: 'You\'re not being replaced by AI. You\'re being replaced by people who already know how to deploy AI inside support. That\'s the exact skill you have.',
+          },
+          three_paths: [
+            {
+              title: 'AI-enabled CX automation consultant',
+              tag: 'Best fit',
+              fit: 92,
+              pitch: 'You install AI-assisted support workflows for small service businesses that don\'t have an ops person. Medspas, dental groups, home services, multi-location franchises.',
+              why: 'You\'ve done exactly this at scale and the buyer market is non-technical — they need someone who speaks support, not engineering.',
+              market: '~2.1M U.S. SMBs in target verticals; near-zero competition under $5k.',
+            },
+            {
+              title: 'Support ops fractional for Series A–B SaaS',
+              tag: 'Adjacent',
+              fit: 78,
+              pitch: 'Build and document support orgs for startups that have outgrown a founder-led queue but don\'t need a full-time VP yet.',
+              why: 'Higher-trust sale, longer cycle, larger contracts ($4–8k/mo). Your network here is your former peers.',
+              market: 'Smaller pool but warm: ~3,800 U.S. SaaS companies in the right stage.',
+            },
+            {
+              title: 'CX teardown content + paid newsletter',
+              tag: 'Long bet',
+              fit: 64,
+              pitch: 'Public CX audits of well-known brands\' support experiences, monetized through sponsorship and an audience-driven consultancy.',
+              why: 'Lower direct revenue early; durable distribution if it works.',
+              market: 'Saturated medium, but no dominant voice in CX teardowns specifically.',
+            },
+          ],
+          recommended_offer: {
+            name: 'The Missed-Call Recovery Setup',
+            tagline: 'For local service businesses with phone-heavy intake',
+            price: '$1,500 setup + $250/mo monitoring',
+            duration: '7 business days',
+            deliverables: [
+              'AI-answered after-hours line with intelligent intake',
+              'Missed-call SMS recovery with booking link',
+              'Internal handoff workflow into existing scheduling tool',
+              'Weekly missed-revenue report for the owner',
+              '30-day post-launch tuning',
+            ],
+            outcome_promise: 'Recover 60–80% of after-hours and missed calls. For a typical medspa, that\'s ~$8,000/month in new bookings within 60 days.',
+            why_this_offer:
+              'Specific. Painful. Measurable. The buyer\'s pain has a dollar sign on it already — every missed call is a known lost booking. You\'re not selling "AI." You\'re selling recovered revenue.',
+            target_customer: 'Owner-operated medspas, dental practices, home services (HVAC/plumbing), multi-location chiropractors. 1–3 locations. $500k–$3M annual revenue. No internal ops or marketing hire.',
+            unit_math: {
+              clients_for_5k: 4,
+              path: 'Land 6 setups → 4 stick on monthly retainer → $1k MRR + 1 new setup/month',
+            },
+          },
+          ninety_day_plan: [
+            {
+              weeks: 'Weeks 1–2',
+              title: 'Build the demo',
+              actions: [
+                'Set up a working AI-answer + SMS recovery demo on your own number',
+                'Record a 2-minute Loom showing the demo end-to-end',
+                'Write the one-page landing site (sarahchencx.com or similar)',
+                'Draft the discovery-call script — 8 questions max',
+                'Build a 200-business prospect list in Austin (medspas + dental + home services)',
+              ],
+            },
+            {
+              weeks: 'Weeks 3–6',
+              title: 'First pilot, first paid client',
+              actions: [
+                'Offer 3 free pilots in exchange for case-study rights and a video testimonial',
+                'Send 30 cold emails / week + 20 cold calls / week. Track replies.',
+                'Run pilots in week 3–4. Document everything. Take metrics screenshots.',
+                'Week 5: convert one pilot to paid retainer. Use the case study to close paid clients 1 and 2.',
+                'Set up Stripe payment link + simple SOW template',
+              ],
+            },
+            {
+              weeks: 'Weeks 7–12',
+              title: 'Repeatable',
+              actions: [
+                'Goal: 6 paid setups complete, 4 on monthly retainer ($5k+ MRR)',
+                'Productize delivery — a checklist + 4-call sequence anyone could run',
+                'Start collecting referrals at month 2 (every happy client = 2 warm intros)',
+                'Decide: stay solo at $8–12k/month, or hire a delivery contractor and scale',
+              ],
+            },
+          ],
+          first_prospects: [
+            { name: 'Aria Medspa', kind: 'Medspa', loc: 'Austin, TX', signal: 'Voicemail at 5:42pm Wednesday — no response by Friday' },
+            { name: 'Bright Smile Dental', kind: 'Dental', loc: 'Cedar Park, TX', signal: '3 locations, no after-hours coverage on website' },
+            { name: 'TexFlow Plumbing', kind: 'Home services', loc: 'Round Rock, TX', signal: 'Google Business reviews mention "couldn\'t get ahold of anyone"' },
+            { name: 'Lake Hills Chiropractic', kind: 'Health', loc: 'Austin, TX', signal: 'Solo practitioner, no booking system on site' },
+            { name: 'Glow Aesthetic Clinic', kind: 'Medspa', loc: 'Round Rock, TX', signal: 'Active on Instagram but call goes to receptionist with no overflow' },
+          ],
+          first_5_actions: [
+            'Reserve sarahchencx.com (cost: $12)',
+            'Set up a Twilio number + simple AI answer script (you\'ve seen this; you can do it in 90 min)',
+            'Write the 1-page site copy — pain, solution, outcome, price, contact',
+            'Build a Google Sheet of 50 prospect businesses with phone, owner name, website',
+            'Send your first 5 emails today — to friends-of-friends only, asking for one warm intro each',
+          ],
+          financial_target: {
+            monthly_goal: 5000,
+            avg_setup_price: 1500,
+            avg_retainer_price: 250,
+            time_to_first_dollar: '21 days',
+            breakeven_clients: 4,
+          },
+        },
+
+        marcus: {
+          id: 'marcus',
+          name: 'Marcus Rivera',
+          age: 38,
+          location: 'Brooklyn, NY',
+          last_role: 'Senior Technical Recruiter',
+          last_company: 'Late-stage AI startup',
+          tenure: '11 years in tech recruiting, last 5 closing senior engineers',
+          situation: 'Quit 8 weeks ago after the third reorg in a year. Burned out, not displaced — but tech recruiting is contracting and he\'s seen too many friends laid off.',
+          income_goal: '$8,000 / month within 90 days',
+          hours: '25–30 hours/week',
+          risk: 'Lower — partner has stable income',
+          resume_snippet: `Senior Technical Recruiter — Pylon AI (2022–2026)
+• Closed 47 senior+ engineering hires across infra, ML, and frontend
+• Built referral program that became 38% of pipeline
+• Owned EVP and salary banding calibration for technical roles
+
+Earlier: Tech Recruiter → Sourcer at Stripe, Asana, and two early-stage co's — 2014–2022`,
+          risk_profile: {
+            level: 'Elevated',
+            color: 'rose',
+            commoditizing: [
+              'Initial sourcing — LinkedIn Recruiter + LLM filters now do this in minutes',
+              'Outreach copy — AI writes 60% of cold messages already',
+              'Resume screening at volume',
+            ],
+            defensible: [
+              'Closing — the conversational judgment to move a candidate from interested to signed',
+              'Calibration with hiring managers when their bar is unclear or wrong',
+              'Network — 11 years of relationships nobody can scrape',
+            ],
+            note: 'Recruiting is contracting AND being commoditized. The pure-volume sourcer role is going away. The closing-and-calibration role is going to fractional.',
+          },
+          three_paths: [
+            {
+              title: 'Fractional hiring partner for seed/Series A startups',
+              tag: 'Best fit',
+              fit: 89,
+              pitch: 'You are the hiring function for 2–3 startups at a time who need senior hires but can\'t justify a full-time recruiter yet.',
+              why: 'You have the network, the closing skill, and the calibration instinct. The buyer (founders) is reachable, and the spend is justified by one bad hire avoided.',
+              market: '~12,000 U.S. startups in target stage actively hiring senior IC roles.',
+            },
+            {
+              title: 'Productized senior-engineering hire (one role, fixed fee)',
+              tag: 'Adjacent',
+              fit: 75,
+              pitch: 'Fixed-price "Senior Eng Hire in 60 Days" engagements at $25k/role. Quality over volume.',
+              why: 'Cleaner deliverable, easier to sell, doesn\'t require retainer commitment from buyer.',
+              market: 'Same buyer pool; different commercial wrapper.',
+            },
+            {
+              title: 'Recruiter operating system (paid newsletter + tools)',
+              tag: 'Long bet',
+              fit: 58,
+              pitch: 'Train the next generation of recruiters in AI-assisted closing. Newsletter + cohort course + tool stack.',
+              why: 'Smaller TAM than you think; recruiters don\'t pay well for education. Defer.',
+              market: 'Niche — defer to year 2.',
+            },
+          ],
+          recommended_offer: {
+            name: 'The Fractional Hiring Partner',
+            tagline: 'You hire when you need to. I am your hiring function the rest of the time.',
+            price: '$6,000/mo retainer per company (cap 2 hires/month) OR $25k fixed-fee per senior hire',
+            duration: 'Month-to-month retainer or per-hire',
+            deliverables: [
+              'Calibration sessions with hiring managers — sharpen the bar before sourcing',
+              'Sourced + screened pipeline (AI-assisted, hand-curated)',
+              'Closing strategy + comp guidance per candidate',
+              'Offer-stage advocacy and reference handoff',
+              'Weekly pipeline review with founder/lead',
+            ],
+            outcome_promise: 'One signed senior engineer in 60 days, or 50% refund. Most clients hire 2–4 per quarter.',
+            why_this_offer:
+              'Founders hate recruiting and they hate agencies. A real partner who is in their Slack, knows their roadmap, and has personally hired this exact role 47 times is a different product than either.',
+            target_customer: 'Seed → Series A startups with 10–40 people, hiring 1–3 senior ICs/quarter. Founder is doing recruiting themselves and exhausted by it.',
+            unit_math: {
+              clients_for_5k: 1,
+              path: '1 retainer client at $6k = goal hit. 2 clients = comfortable. 3 = capacity limit.',
+            },
+          },
+          ninety_day_plan: [
+            {
+              weeks: 'Weeks 1–2',
+              title: 'Activate the network',
+              actions: [
+                'Personal message to 80 founders/hiring leads in your network — not a pitch, an update',
+                'Set up a simple one-page site + a 5-bullet "what I do now" Notion page to share',
+                'Draft the engagement memo (terms, deliverables, refund clause) as a Google Doc template',
+                'Pick 3 verticals you\'ll specialize in (e.g. AI infra, dev tools, fintech)',
+              ],
+            },
+            {
+              weeks: 'Weeks 3–6',
+              title: 'First two clients',
+              actions: [
+                '15 founder coffees / video calls per week — explicitly ask "who do you know who\'s hiring senior eng and stressed about it?"',
+                'Convert first 1–2 retainer clients (week 4–5)',
+                'Run intake + calibration + first-week sourcing on week 1 of engagement — show value fast',
+                'Document the playbook as you go so it\'s repeatable',
+              ],
+            },
+            {
+              weeks: 'Weeks 7–12',
+              title: 'Steady-state',
+              actions: [
+                'Target: 2 retainer clients + 1 active per-hire engagement at any given time',
+                '$8k–$12k/mo target hit',
+                'Quarterly hiring-trend memo to your network — keeps you top of mind',
+                'Decide whether to stay solo or build an apprentice model',
+              ],
+            },
+          ],
+          first_prospects: [
+            { name: 'Anthropic alum founder, stealth AI infra co', kind: 'Series A', loc: 'SF', signal: 'Posted hiring 2 senior eng last week on X' },
+            { name: 'Datadog alum, dev tools startup', kind: 'Seed', loc: 'NYC', signal: 'Personal friend; founder is doing recruiting solo' },
+            { name: 'YC W26 batch — fintech infra', kind: 'Seed', loc: 'SF', signal: 'Just raised; no in-house recruiter' },
+            { name: 'Mid-stage AI co-pilot company', kind: 'Series B', loc: 'NYC', signal: 'Had layoffs; now rebuilding eng team without internal recruiter' },
+            { name: 'Climate tech, Series A', kind: 'Series A', loc: 'Remote', signal: 'Founder posted on LinkedIn about \"hiring exhaustion\"' },
+          ],
+          first_5_actions: [
+            'Open a fresh notes doc and list 80 people in your network who hire',
+            'Write the "I\'m doing this now" update message — neutral, professional, one paragraph',
+            'Send the first 10 today. Track responses in a simple sheet.',
+            'Reserve your domain. Build the one-page Notion site tonight.',
+            'Block your calendar: 15 coffees/week for the next two weeks. That\'s the entire pipeline.',
+          ],
+          financial_target: {
+            monthly_goal: 8000,
+            avg_setup_price: 25000,
+            avg_retainer_price: 6000,
+            time_to_first_dollar: '30 days',
+            breakeven_clients: 2,
+          },
+        },
+
+        priya: {
+          id: 'priya',
+          name: 'Priya Shah',
+          age: 31,
+          location: 'Remote (Chicago)',
+          last_role: 'Lifecycle Marketing Manager',
+          last_company: 'DTC e-commerce brand',
+          tenure: '7 years in marketing, last 4 in lifecycle/retention',
+          situation: 'Role compressed to half-time then eliminated. Three of her former colleagues started "fractional CMO" practices and she\'s skeptical of the crowded space.',
+          income_goal: '$6,000 / month within 90 days',
+          hours: '35 hours/week',
+          risk: 'Moderate — 3 months runway, no dependents',
+          resume_snippet: `Lifecycle Marketing Manager — Heron Goods (2022–2026)
+• Owned the full email + SMS lifecycle for a $24M DTC apparel brand
+• Lifted post-purchase LTV by 31% through win-back and replenishment flows
+• Built and managed Klaviyo, Postscript, and Iterable instances
+• Cross-functional with product, retention, and creative
+
+Earlier: Email Marketing Specialist → Sr. Specialist at two DTC brands — 2019–2022`,
+          risk_profile: {
+            level: 'Moderate',
+            color: 'amber',
+            commoditizing: [
+              'Email copy generation (every brand is using AI for first drafts now)',
+              'Audience segmentation suggestions — Klaviyo and Iterable now bake this in',
+              'Campaign performance reporting',
+            ],
+            defensible: [
+              'Lifecycle strategy — knowing which flows to build first and why',
+              'Brand voice judgment — keeping emails on-brand while AI assists',
+              'Retention math — knowing whether a 9% lift is worth the build',
+            ],
+            note: 'You\'re right that "fractional CMO" is crowded. The opportunity is to be specific: lifecycle, not generalist. Most "fractional CMOs" are former growth or content people pretending they know retention. You actually do.',
+          },
+          three_paths: [
+            {
+              title: 'Productized lifecycle marketing for DTC brands',
+              tag: 'Best fit',
+              fit: 88,
+              pitch: 'You install the "lifecycle backbone" — welcome series, post-purchase, win-back, replenishment — for $8–15M DTC brands in 30 days. No retainer, just delivery.',
+              why: 'A specific deliverable for a specific buyer. Cleaner than "fractional CMO." Buyers know what they\'re getting.',
+              market: '~4,000 U.S. DTC brands in $5–30M revenue band, most don\'t have full-time lifecycle ownership.',
+            },
+            {
+              title: 'Fractional retention lead for one brand at a time',
+              tag: 'Adjacent',
+              fit: 74,
+              pitch: 'Embedded part-time inside one brand for 3–6 months at a time. Less variety, more depth.',
+              why: 'Easier to deliver excellent work; harder to scale beyond your hours. Good "bridge" model while you build the productized version.',
+              market: 'Same DTC pool; smaller subset that wants embedded fractional.',
+            },
+            {
+              title: 'Klaviyo + Iterable agency for non-technical operators',
+              tag: 'Long bet',
+              fit: 62,
+              pitch: 'Build a small services business around installing and managing the lifecycle tooling itself.',
+              why: 'Higher recurring revenue, but you become an agency owner. Different skill set.',
+              market: 'Crowded, but specialization is real.',
+            },
+          ],
+          recommended_offer: {
+            name: 'The 30-Day Lifecycle Sprint',
+            tagline: 'For DTC brands losing repeat revenue they\'ve already paid to acquire',
+            price: '$7,500 fixed-fee, 30 days',
+            duration: '30 calendar days',
+            deliverables: [
+              'Audit of current lifecycle program (or absence of one)',
+              'Built welcome series, post-purchase, win-back, and replenishment flows in their ESP',
+              'Voice + copy guidelines for AI-assisted future production',
+              'Performance dashboard + 90-day target plan',
+              'Two follow-up office-hours sessions in months 2 and 3',
+            ],
+            outcome_promise: 'A typical engagement lifts repeat-purchase revenue 18–35% in 60 days post-launch. ROI within the first quarter.',
+            why_this_offer:
+              'Fixed price beats retainer for buyers who\'ve been burned by agencies. 30 days is short enough to feel like a decision, long enough to deliver real work. The deliverable is in their hands at the end — not dependent on you continuing.',
+            target_customer: 'DTC brands doing $5–30M in revenue, founder-led or with a small in-house team. No dedicated lifecycle owner. Email + SMS open but underused.',
+            unit_math: {
+              clients_for_5k: 1,
+              path: '1 sprint/month at $7,500 = above goal. 2/month = $15k. Cap is ~10 sprints/year solo.',
+            },
+          },
+          ninety_day_plan: [
+            {
+              weeks: 'Weeks 1–2',
+              title: 'Position and signal',
+              actions: [
+                'Build a portfolio of 3 anonymized case studies from your last role',
+                'Write 5 long-form posts on retention math — publish to LinkedIn weekly',
+                'Reach out to 6 former colleagues now at other DTC brands; ask for 15-min intros',
+                'Create the sprint deliverable template (what they get on day 30)',
+                'Set price ($7,500) and write the engagement memo',
+              ],
+            },
+            {
+              weeks: 'Weeks 3–6',
+              title: 'First two sprints',
+              actions: [
+                'Convert 1 friends-and-network brand at a discount ($4,500) for case study rights',
+                'Convert client 2 at full price ($7,500) via referral from your network',
+                'Run both sprints in parallel — they don\'t overlap on intensive days',
+                'Document everything for case-study production',
+              ],
+            },
+            {
+              weeks: 'Weeks 7–12',
+              title: 'Repeatable inbound',
+              actions: [
+                'Publish both case studies. Pin to LinkedIn. Send to network.',
+                '1–2 LinkedIn posts/week on retention. Build modest but compounding inbound.',
+                'Goal: 1 sprint/month closed via inbound + referral; 1 via outbound (warm intros)',
+                'Hit $6–10k/mo. Decide whether to add a "lifecycle care" retainer post-sprint ($1k/mo).',
+              ],
+            },
+          ],
+          first_prospects: [
+            { name: 'Maven Apparel', kind: 'DTC apparel', loc: 'Remote', signal: 'Welcome email is "thanks for signing up" — no follow-up' },
+            { name: 'Folio Sleep', kind: 'DTC bedding', loc: 'Remote', signal: 'No replenishment flow despite consumable product line' },
+            { name: 'Spruce Pantry', kind: 'DTC food', loc: 'Remote', signal: 'Active SMS list, no segmentation visible' },
+            { name: 'Halo Bath', kind: 'DTC personal care', loc: 'Remote', signal: 'Aggressive paid acquisition, no win-back' },
+            { name: 'Brushland Co.', kind: 'DTC home', loc: 'Remote', signal: 'Founder posts on LinkedIn about retention, no in-house lead' },
+          ],
+          first_5_actions: [
+            'Open Klaviyo and screenshot 3 of your best flows (with proper redactions) — these are your portfolio',
+            'Draft today\'s LinkedIn post: "The boring math of post-purchase email"',
+            'Make a list of 12 DTC founders/operators you know personally',
+            'DM 3 of them today — ask "who do you know struggling with retention?"',
+            'Reserve priyashahcx.com (or your variant) and put up a single-page placeholder',
+          ],
+          financial_target: {
+            monthly_goal: 6000,
+            avg_setup_price: 7500,
+            avg_retainer_price: 1000,
+            time_to_first_dollar: '21 days',
+            breakeven_clients: 1,
+          },
+        },
+
+        alex: {
+          id: 'alex',
+          name: 'Alex Park',
+          age: 26,
+          location: 'San Francisco, CA',
+          last_role: 'Software Engineer II',
+          last_company: 'Mid-size B2B SaaS',
+          tenure: '3 years, last role was full-stack on internal tooling',
+          situation: 'Saw two rounds of layoffs hit colleagues. Not laid off yet, but watching junior eng roles consolidate fast. Wants a Plan B income stream first, then evaluate.',
+          income_goal: '$3,000 / month within 90 days (side income, keep day job)',
+          hours: '10–15 hours/week (nights + weekends)',
+          risk: 'Low — has day job, no urgency',
+          resume_snippet: `Software Engineer II — Lattice Tools (2023–present)
+• Full-stack on internal admin and customer-facing dashboards
+• Built three internal LLM-powered tools used by support and ops
+• Shipped React + TypeScript + Postgres features end-to-end
+
+Earlier: SWE I at same company; CS degree 2022.`,
+          risk_profile: {
+            level: 'Watch carefully',
+            color: 'amber',
+            commoditizing: [
+              'Junior IC eng work — increasingly compressed by AI-assisted senior eng',
+              'Internal-tool building — the exact thing you do has become "what AI is for"',
+              'Generic React/TS dashboard work',
+            ],
+            defensible: [
+              'Knowing how to actually ship AI tools that production users adopt',
+              'Bridging "what AI can do" with "what a non-technical team can use"',
+              'Speed — you can prototype in hours what most consultants quote weeks for',
+            ],
+            note: 'Don\'t panic and don\'t quit. Build a side income stream that uses the exact skill that\'s pressuring your day job: implementing AI inside small businesses. If your job survives, it\'s portfolio. If it doesn\'t, you\'re already running.',
+          },
+          three_paths: [
+            {
+              title: 'AI implementation consultant for SMBs',
+              tag: 'Best fit',
+              fit: 86,
+              pitch: 'Small businesses (10–50 person) hire you to actually ship one specific AI workflow — not consult about it. Fixed scope, fixed price, 2-week sprints.',
+              why: 'Your speed is the product. Most agencies quote 6 weeks for what you can do in a weekend. Charge for outcomes, not hours.',
+              market: 'Effectively unbounded — every SMB owner is hearing "use AI" and has no way to actually do it.',
+            },
+            {
+              title: 'Productized internal-tool sprints',
+              tag: 'Adjacent',
+              fit: 72,
+              pitch: 'You build the one internal tool the SMB has wanted for 2 years (custom CRM, inventory tracker, ops dashboard) in 2 weeks for $5k.',
+              why: 'Adjacent to path 1. Same buyer, different deliverable. Easier for some buyers to understand.',
+              market: 'Same SMB pool.',
+            },
+            {
+              title: 'Newsletter + small open-source project',
+              tag: 'Long bet',
+              fit: 65,
+              pitch: 'Build something useful in public; let inbound find you.',
+              why: 'Slower to revenue, but you\'re young and your distribution will compound. Defer unless you have inbound interest already.',
+              market: 'Distribution is the bottleneck, not market.',
+            },
+          ],
+          recommended_offer: {
+            name: 'The Two-Week AI Build',
+            tagline: 'One specific AI workflow, shipped in two weeks. Not a consultation.',
+            price: '$3,500 fixed-fee per build',
+            duration: '14 calendar days',
+            deliverables: [
+              'Day 1: 90-min scope call. We agree on one specific workflow and success criteria.',
+              'Days 2–10: I build. I share a working preview by day 7.',
+              'Days 11–14: revisions, deploy to your environment, train one person on your team.',
+              'One follow-up call at day 30 to address adoption issues.',
+            ],
+            outcome_promise: 'A working tool your team actually uses. Not a slide deck. Not a roadmap. Code that runs.',
+            why_this_offer:
+              'SMB owners have AI fatigue from agencies pitching strategy decks. Your differentiator is "I will literally ship code in 14 days." Nobody else in your buyer\'s consideration set does that.',
+            target_customer: 'SMBs with 10–50 employees and at least one person comfortable with software. Common targets: law firms, accounting practices, real estate teams, e-commerce ops teams. They have a specific pain ("we re-type customer info into 3 systems") and a budget.',
+            unit_math: {
+              clients_for_5k: 1,
+              path: '1 build/month = $3.5k. 2 builds = $7k. Cap is ~1/month at 10–15 hrs/wk.',
+            },
+          },
+          ninety_day_plan: [
+            {
+              weeks: 'Weeks 1–2',
+              title: 'Build a real demo',
+              actions: [
+                'Pick one common SMB pain (e.g. customer-info-into-3-systems) and build a working demo for a fake company. Open source it.',
+                'Write up the demo as a teardown post on your blog (or set one up)',
+                'Tell 10 friends with small businesses what you\'re doing. Ask for one warm intro each.',
+                'Build a 1-page site with the demo embedded',
+              ],
+            },
+            {
+              weeks: 'Weeks 3–6',
+              title: 'First two builds',
+              actions: [
+                'First build: a friend or warm intro. Half-price ($1,750) in exchange for case study.',
+                'Document the entire 14 days as a public build log.',
+                'Second build: full price. From the inbound your case study generates.',
+                'Build a simple project intake form so prospects can self-qualify',
+              ],
+            },
+            {
+              weeks: 'Weeks 7–12',
+              title: 'Steady cadence',
+              actions: [
+                'Goal: 1 build per month, $3,500/build, no overlap with day job intensity',
+                'Decide month 3 whether this is replacing your job soon or staying a side stream',
+                'Build cash buffer: 6 months of expenses before considering a jump',
+              ],
+            },
+          ],
+          first_prospects: [
+            { name: 'A friend\'s parents\' accounting practice', kind: 'Accounting', loc: 'Bay Area', signal: 'Doing tax-document intake by email + spreadsheet' },
+            { name: 'Old college friend\'s real estate team', kind: 'Real estate', loc: 'Remote', signal: 'Re-typing listings into 4 tools' },
+            { name: 'Your dentist\'s office', kind: 'Health', loc: 'Local', signal: 'You\'ve seen the chaos firsthand' },
+            { name: 'A bootstrapped DTC brand a friend works at', kind: 'DTC', loc: 'Remote', signal: 'They\'ve mentioned wanting an internal tool' },
+            { name: 'Your uncle\'s law firm', kind: 'Legal', loc: 'Local', signal: 'Family — built-in trust to test on' },
+          ],
+          first_5_actions: [
+            'List 10 SMB owners you have personal access to — even loose connections',
+            'Pick ONE common pain you\'ve heard 2+ of them mention',
+            'Spend this Saturday building a demo of solving that pain. Open source it.',
+            'Write a 500-word post on your blog about the demo. No selling. Just the build.',
+            'Share it on Sunday in your group chat / personal LinkedIn. See what comes back.',
+          ],
+          financial_target: {
+            monthly_goal: 3000,
+            avg_setup_price: 3500,
+            avg_retainer_price: 0,
+            time_to_first_dollar: '28 days',
+            breakeven_clients: 1,
+          },
+        },
+      };
+
+      // ─────────────────────────────────────────────────────────────────
+      // Top-level App
+      // ─────────────────────────────────────────────────────────────────
+      function App() {
+        const [screen, setScreen] = useState('landing');
+        const [persona, setPersona] = useState(null);
+        const [resume, setResume] = useState('');
+        const [income, setIncome] = useState('5000');
+        const [hours, setHours] = useState('30+');
+        const [risk, setRisk] = useState('moderate');
+        const [loadingStep, setLoadingStep] = useState(0);
+
+        function startDiagnostic() {
+          setScreen('intake');
+          setResume('');
+        }
+        function pickDemo(p) {
+          setPersona(PERSONAS[p]);
+          setResume(PERSONAS[p].resume_snippet);
+          setIncome(String(PERSONAS[p].financial_target.monthly_goal));
+          setHours(PERSONAS[p].id === 'alex' ? '10-15' : '30+');
+          setRisk(PERSONAS[p].id === 'marcus' ? 'low' : PERSONAS[p].id === 'alex' ? 'low' : 'moderate');
+          setScreen('intake');
+        }
+        function runDiagnostic() {
+          if (!persona) {
+            // user pasted custom — default to sarah for demo
+            setPersona(PERSONAS.sarah);
+          }
+          setScreen('loading');
+          setLoadingStep(0);
+        }
+
+        // animated loading sequence
+        useEffect(() => {
+          if (screen !== 'loading') return;
+          const steps = 4;
+          let i = 0;
+          const interval = setInterval(() => {
+            i += 1;
+            setLoadingStep(i);
+            if (i >= steps) {
+              clearInterval(interval);
+              setTimeout(() => setScreen('results'), 600);
+            }
+          }, 950);
+          return () => clearInterval(interval);
+        }, [screen]);
+
+        return e('div', { className: 'min-h-screen text-ink-900' },
+          e(Nav, { screen, onLogo: () => setScreen('landing') }),
+          screen === 'landing' && e(Landing, { onStart: startDiagnostic, onDemo: pickDemo }),
+          screen === 'intake' && e(Intake, {
+            resume, setResume, income, setIncome, hours, setHours, risk, setRisk,
+            persona, onBack: () => setScreen('landing'), onRun: runDiagnostic,
+            onPickDemo: pickDemo,
+          }),
+          screen === 'loading' && e(Loading, { step: loadingStep }),
+          screen === 'results' && persona && e(Results, {
+            persona, onCommandCenter: () => setScreen('command_center'),
+            onSwitchPersona: pickDemo, onRestart: () => setScreen('landing'),
+          }),
+          screen === 'command_center' && persona && e(CommandCenter, {
+            persona, onBack: () => setScreen('results'),
+          }),
+          e(Footer),
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Navigation
+      // ─────────────────────────────────────────────────────────────────
+      function Nav({ screen, onLogo }) {
+        return e('header', { className: 'border-b hairline bg-cream-100/80 backdrop-blur sticky top-0 z-30' },
+          e('div', { className: 'max-w-6xl mx-auto px-6 h-14 flex items-center justify-between' },
+            e('button', { onClick: onLogo, className: 'flex items-center gap-2 group' },
+              e('div', { className: 'h-7 w-7 bg-ink-900 text-cream-50 grid place-items-center rounded-sm font-serif text-sm font-semibold' }, 'S'),
+              e('span', { className: 'font-serif text-lg font-medium tracking-tight' }, 'SelfEmployed.app'),
+            ),
+            e('nav', { className: 'hidden sm:flex items-center gap-7 text-sm text-ink-500' },
+              e('a', { href: '#', className: 'hover:text-ink-900' }, 'How it works'),
+              e('a', { href: '#', className: 'hover:text-ink-900' }, 'Pricing'),
+              e('a', { href: '#', className: 'hover:text-ink-900' }, 'Stories'),
+              e('button', { className: 'px-3 py-1.5 rounded-md border hairline hover:bg-cream-200 text-ink-800 font-medium' }, 'Sign in'),
+            ),
+          ),
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Landing page
+      // ─────────────────────────────────────────────────────────────────
+      function Landing({ onStart, onDemo }) {
+        return e(React.Fragment, null,
+          // Hero
+          e('section', { className: 'relative overflow-hidden' },
+            e('div', { className: 'absolute inset-0 grain opacity-30 pointer-events-none' }),
+            e('div', { className: 'max-w-6xl mx-auto px-6 pt-20 pb-16' },
+              e('div', { className: 'fade-in max-w-3xl' },
+                e('div', { className: 'inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-ink-500 mb-7' },
+                  e('span', { className: 'h-1.5 w-1.5 rounded-full bg-amber-700' }),
+                  'A serious plan for an uncertain decade',
+                ),
+                e('h1', { className: 'font-serif text-[44px] sm:text-[58px] leading-[1.05] font-medium tracking-tight text-ink-900' },
+                  'Self-employment is becoming the new ',
+                  e('span', { className: 'underline-mark' }, 'fallback plan'), '.',
+                  e('br'),
+                  'Make it ',
+                  e('em', { className: 'italic font-serif text-amber-700' }, 'an actual plan'),
+                  '.',
+                ),
+                e('p', { className: 'mt-7 text-lg text-ink-500 leading-relaxed max-w-2xl' },
+                  'When your job changes — cut, compressed, or quietly automated — you don’t just lose a paycheck. You lose sales, marketing, accounting, legal, IT, HR, and a place to sit. SelfEmployed.app helps you replace all of it, in the right order.'
+                ),
+                e('div', { className: 'mt-9 flex flex-wrap items-center gap-3' },
+                  e('button', {
+                    onClick: onStart,
+                    className: 'group inline-flex items-center gap-2 bg-ink-900 text-cream-50 px-5 py-3 rounded-md font-medium hover:bg-amber-700 transition',
+                  }, 'Get your transition plan', e(ArrowRight, { size: 18, className: 'group-hover:translate-x-0.5 transition' })),
+                  e('button', {
+                    className: 'inline-flex items-center gap-2 px-5 py-3 rounded-md border hairline text-ink-800 font-medium hover:bg-cream-200',
+                  }, 'See how it works'),
+                ),
+                e('div', { className: 'mt-5 text-xs text-ink-400' }, 'Free · No card required · ~7 minutes · Your data stays yours'),
+              ),
+            ),
+          ),
+
+          // Honest framing strip
+          e('section', { className: 'border-y hairline bg-cream-50' },
+            e('div', { className: 'max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10' },
+              e(HonestStat, { number: '22%', label: 'projected job disruption by 2030 (World Economic Forum, 2025)' }),
+              e(HonestStat, { number: '503,171', label: 'U.S. business applications in April 2026 (Census Bureau, seasonally adjusted)' }),
+              e(HonestStat, { number: '64M', label: 'Americans freelanced in 2023 — 38% of the workforce (Upwork Freelance Forward)' }),
+            ),
+          ),
+
+          // What you get
+          e('section', { className: 'max-w-6xl mx-auto px-6 py-20' },
+            e('div', { className: 'max-w-2xl mb-12' },
+              e('div', { className: 'text-xs uppercase tracking-[0.18em] text-amber-700 mb-4' }, 'What you get'),
+              e('h2', { className: 'font-serif text-3xl sm:text-4xl font-medium leading-tight tracking-tight' },
+                'A real plan, in your hands, in under ten minutes.'
+              ),
+              e('p', { className: 'mt-5 text-ink-500 leading-relaxed' },
+                'Not a quiz. Not a course. A specific, opinionated, written plan grounded in your actual work history.'
+              ),
+            ),
+            e('div', { className: 'grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-cream-300 border hairline rounded-md overflow-hidden' },
+              [
+                { icon: ShieldAlert, title: 'Your displacement risk', body: 'Which parts of your role are commoditizing, and which parts are still genuinely defensible. Honestly calibrated, not fear-mongering.' },
+                { icon: Compass, title: 'Three solo paths that fit you', body: 'Ranked by fit, market size, and how fast you can credibly land your first client. With the trade-offs.' },
+                { icon: Target, title: 'Your first offer', body: 'A productized service with a specific buyer, a specific deliverable, and a price the market will pay. Not "consulting."' },
+                { icon: Calendar, title: 'A 90-day plan', body: 'Week-by-week actions to get from where you are now to first paid client. With time and cash targets.' },
+                { icon: Users, title: 'Your first 25 prospects', body: 'Real target customers, with the signal that suggests they\'d buy. Not "network on LinkedIn."' },
+                { icon: ClipboardCheck, title: 'Today\'s first five actions', body: 'You can start in the next hour. We tell you exactly which hour.' },
+              ].map((c, i) => e(WhatYouGetCard, { key: i, ...c })),
+            ),
+          ),
+
+          // Demo personas
+          e('section', { className: 'border-y hairline bg-cream-200/60' },
+            e('div', { className: 'max-w-6xl mx-auto px-6 py-20' },
+              e('div', { className: 'flex flex-wrap items-end justify-between gap-6 mb-10' },
+                e('div', null,
+                  e('div', { className: 'text-xs uppercase tracking-[0.18em] text-amber-700 mb-3' }, 'Try a demo profile'),
+                  e('h2', { className: 'font-serif text-3xl sm:text-4xl font-medium leading-tight tracking-tight max-w-2xl' },
+                    'See exactly what the output looks like.'
+                  ),
+                ),
+                e('div', { className: 'text-ink-500 text-sm max-w-md' },
+                  'Pick a profile to see the full diagnostic without typing your own. Each one is rendered live from the same engine you\'d use.'
+                ),
+              ),
+              e('div', { className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4' },
+                Object.values(PERSONAS).map(p => e(PersonaCard, { key: p.id, persona: p, onPick: () => onDemo(p.id) })),
+              ),
+            ),
+          ),
+
+          // Stages strip
+          e('section', { className: 'max-w-6xl mx-auto px-6 py-20' },
+            e('div', { className: 'max-w-2xl mb-12' },
+              e('div', { className: 'text-xs uppercase tracking-[0.18em] text-amber-700 mb-4' }, 'The whole arc'),
+              e('h2', { className: 'font-serif text-3xl sm:text-4xl font-medium leading-tight tracking-tight' },
+                'From displaced to independently earning.'
+              ),
+              e('p', { className: 'mt-5 text-ink-500 leading-relaxed' },
+                'The Diagnostic is the front door. The product is the operating system you graduate into once you have your first paying client.'
+              ),
+            ),
+            e('ol', { className: 'space-y-px bg-cream-300 border hairline rounded-md overflow-hidden' },
+              [
+                ['01', 'Decide', 'What self-employed path makes sense for you, honestly.', true],
+                ['02', 'Package', 'Turn your skill into a productized service buyers actually buy.', true],
+                ['03', 'Prove', 'Build the demo or case study that makes you credible.', false],
+                ['04', 'Sell', 'A pipeline you can actually run — prospects, outreach, follow-ups.', false],
+                ['05', 'Deliver', 'Onboarding, scope, status — without losing your evenings to admin.', false],
+                ['06', 'Operate', 'Invoicing, taxes, cash flow. Quietly, in the background.', false],
+              ].map(([num, title, body, live]) =>
+                e('li', { key: num, className: 'bg-cream-50 px-6 py-5 flex items-start gap-6' },
+                  e('div', { className: 'font-mono text-xs text-ink-400 pt-1' }, num),
+                  e('div', { className: 'flex-1' },
+                    e('div', { className: 'flex items-center gap-3' },
+                      e('h3', { className: 'font-serif text-xl font-medium' }, title),
+                      live
+                        ? e('span', { className: 'text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-forest-700 text-cream-50' }, 'in v1')
+                        : e('span', { className: 'text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-cream-300 text-ink-500' }, 'soon'),
+                    ),
+                    e('p', { className: 'mt-1.5 text-ink-500' }, body),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Closing CTA
+          e('section', { className: 'bg-ink-900 text-cream-50' },
+            e('div', { className: 'max-w-6xl mx-auto px-6 py-20 flex flex-col md:flex-row items-start md:items-end justify-between gap-8' },
+              e('div', { className: 'max-w-2xl' },
+                e('h2', { className: 'font-serif text-3xl sm:text-5xl font-medium leading-tight tracking-tight' },
+                  'You lost more than a paycheck. ',
+                  e('span', { className: 'text-amber-600' }, 'Get more than a tool.'),
+                ),
+                e('p', { className: 'mt-6 text-cream-300 leading-relaxed text-lg' },
+                  'SelfEmployed.app is built for the people the next economy is quietly asking to become microcompanies of one. We don\'t think that\'s entirely fair. We do think it can be survivable, then good, then real.'
+                ),
+              ),
+              e('button', {
+                onClick: onStart,
+                className: 'group inline-flex items-center gap-2 bg-cream-50 text-ink-900 px-6 py-4 rounded-md font-medium hover:bg-amber-600 hover:text-cream-50 transition whitespace-nowrap',
+              }, 'Get your transition plan', e(ArrowRight, { size: 18, className: 'group-hover:translate-x-0.5 transition' })),
+            ),
+          ),
+        );
+      }
+
+      function HonestStat({ number, label }) {
+        return e('div', null,
+          e('div', { className: 'font-serif text-4xl font-medium tracking-tight' }, number),
+          e('div', { className: 'mt-3 text-sm text-ink-500 leading-relaxed max-w-xs' }, label),
+        );
+      }
+
+      function WhatYouGetCard({ icon: Icon, title, body }) {
+        return e('div', { className: 'bg-cream-50 p-7 flex flex-col gap-3' },
+          e('div', { className: 'h-9 w-9 rounded-md bg-cream-200 grid place-items-center text-amber-700' },
+            e(Icon, { size: 18 }),
+          ),
+          e('h3', { className: 'font-serif text-xl font-medium mt-1' }, title),
+          e('p', { className: 'text-ink-500 text-[15px] leading-relaxed' }, body),
+        );
+      }
+
+      function PersonaCard({ persona, onPick }) {
+        return e('button', {
+          onClick: onPick,
+          className: 'text-left bg-cream-50 border hairline rounded-md p-5 hover:shadow-card hover:-translate-y-0.5 transition group',
+        },
+          e('div', { className: 'flex items-center gap-3' },
+            e('div', { className: 'h-9 w-9 rounded-full bg-ink-900 text-cream-50 grid place-items-center font-serif font-medium' },
+              persona.name.split(' ').map(w => w[0]).join('')),
+            e('div', null,
+              e('div', { className: 'font-medium text-ink-900' }, persona.name),
+              e('div', { className: 'text-xs text-ink-400' }, persona.last_role),
+            ),
+          ),
+          e('p', { className: 'mt-4 text-sm text-ink-500 leading-relaxed line-clamp-3' }, persona.situation),
+          e('div', { className: 'mt-4 flex items-center justify-between text-xs text-ink-400 pt-3 border-t hairline' },
+            e('span', null, persona.location),
+            e('span', { className: 'inline-flex items-center gap-1 text-amber-700 font-medium group-hover:gap-1.5 transition-all' },
+              'View diagnostic', e(ArrowRight, { size: 12 })),
+          ),
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Intake
+      // ─────────────────────────────────────────────────────────────────
+      function Intake({ resume, setResume, income, setIncome, hours, setHours, risk, setRisk, persona, onBack, onRun, onPickDemo }) {
+        return e('section', { className: 'max-w-3xl mx-auto px-6 py-12 fade-in' },
+          e('button', { onClick: onBack, className: 'inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-ink-900 mb-8' },
+            e(ArrowLeft, { size: 14 }), 'Back'
+          ),
+          e('div', { className: 'mb-10' },
+            e('div', { className: 'text-xs uppercase tracking-[0.18em] text-amber-700 mb-3' }, 'Step 1 of 1'),
+            e('h1', { className: 'font-serif text-4xl font-medium tracking-tight leading-tight' },
+              'Tell us about your work.'
+            ),
+            e('p', { className: 'mt-3 text-ink-500 leading-relaxed' },
+              'Paste your resume, or describe what you did in your last job. The more specific you are, the more specific your plan will be.'
+            ),
+          ),
+
+          // demo strip
+          e('div', { className: 'mb-6 flex flex-wrap items-center gap-2 text-sm' },
+            e('span', { className: 'text-ink-400' }, 'Or try a demo:'),
+            Object.values(PERSONAS).map(p => e('button', {
+              key: p.id, onClick: () => onPickDemo(p.id),
+              className: 'px-2.5 py-1 rounded-full border hairline text-ink-700 hover:bg-cream-200 hover:border-amber-700 text-xs',
+            }, p.name.split(' ')[0] + ' — ' + p.last_role.split(' ').slice(-2).join(' '))),
+          ),
+
+          e('div', { className: 'space-y-6' },
+            e('div', null,
+              e('label', { className: 'block text-sm font-medium text-ink-800 mb-2' }, 'Your work history'),
+              e('textarea', {
+                value: resume,
+                onChange: ev => setResume(ev.target.value),
+                rows: 10,
+                placeholder: 'Paste your resume, LinkedIn summary, or just describe what you did at your last job and the one before that...',
+                className: 'w-full bg-cream-50 border hairline rounded-md px-4 py-3 text-sm font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-700/30 focus:border-amber-700',
+              }),
+            ),
+
+            e('div', { className: 'grid sm:grid-cols-3 gap-4' },
+              e(SelectField, {
+                label: 'Monthly income goal',
+                value: income, onChange: setIncome,
+                options: [['3000', '$3,000'], ['5000', '$5,000'], ['8000', '$8,000'], ['12000', '$12,000+']],
+              }),
+              e(SelectField, {
+                label: 'Hours available / week',
+                value: hours, onChange: setHours,
+                options: [['10-15', '10–15 hrs'], ['20-30', '20–30 hrs'], ['30+', '30+ hrs']],
+              }),
+              e(SelectField, {
+                label: 'Risk tolerance',
+                value: risk, onChange: setRisk,
+                options: [['low', 'Low — need fast cash'], ['moderate', 'Moderate'], ['high', 'High — long horizon']],
+              }),
+            ),
+
+            e('div', { className: 'pt-4 flex items-center justify-between border-t hairline' },
+              e('div', { className: 'text-xs text-ink-400' },
+                'Your input is processed by AI to generate your plan. We don’t share it.'
+              ),
+              e('button', {
+                onClick: onRun, disabled: !resume,
+                className: 'inline-flex items-center gap-2 bg-ink-900 text-cream-50 px-5 py-2.5 rounded-md font-medium hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition',
+              }, 'Generate my plan', e(ArrowRight, { size: 16 })),
+            ),
+          ),
+        );
+      }
+
+      function SelectField({ label, value, onChange, options }) {
+        return e('div', null,
+          e('label', { className: 'block text-sm font-medium text-ink-800 mb-2' }, label),
+          e('div', { className: 'relative' },
+            e('select', {
+              value, onChange: ev => onChange(ev.target.value),
+              className: 'w-full appearance-none bg-cream-50 border hairline rounded-md px-3 py-2.5 text-sm pr-8 focus:outline-none focus:ring-2 focus:ring-amber-700/30 focus:border-amber-700',
+            }, options.map(([v, l]) => e('option', { key: v, value: v }, l))),
+            e(ChevronDown, { size: 14, className: 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-ink-400' }),
+          ),
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Loading sequence
+      // ─────────────────────────────────────────────────────────────────
+      function Loading({ step }) {
+        const steps = [
+          'Reading your work history',
+          'Mapping where AI is and isn’t replacing your role',
+          'Drafting three viable solo paths',
+          'Building your 90-day plan',
+        ];
+        return e('section', { className: 'max-w-2xl mx-auto px-6 py-24 fade-in' },
+          e('div', { className: 'flex items-center gap-3 mb-10' },
+            e(Loader2, { className: 'slow-spin text-amber-700', size: 22 }),
+            e('div', { className: 'font-serif text-2xl font-medium tracking-tight' }, 'Thinking carefully…'),
+          ),
+          e('ol', { className: 'space-y-3' },
+            steps.map((s, i) => {
+              const done = i < step;
+              const active = i === step;
+              return e('li', { key: i, className: 'flex items-center gap-3 ' + (done ? 'text-ink-900' : active ? 'text-ink-700' : 'text-ink-300') },
+                e('span', { className: 'h-5 w-5 rounded-full grid place-items-center border hairline ' + (done ? 'bg-amber-700 border-amber-700 text-cream-50' : active ? 'bg-cream-50' : 'bg-cream-50') },
+                  done ? e(Check, { size: 12 }) : active ? e('span', { className: 'h-1.5 w-1.5 rounded-full bg-amber-700 pulse-dot' }) : null,
+                ),
+                e('span', { className: 'text-sm' }, s),
+              );
+            }),
+          ),
+          e('p', { className: 'mt-12 text-xs text-ink-400' },
+            'A real plan takes a real model a minute to write. We don’t rush.'
+          ),
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Results / Diagnostic Output
+      // ─────────────────────────────────────────────────────────────────
+      function Results({ persona, onCommandCenter, onSwitchPersona, onRestart }) {
+        return e('section', { className: 'fade-in' },
+          // Top bar with persona switcher
+          e('div', { className: 'border-b hairline bg-cream-50' },
+            e('div', { className: 'max-w-5xl mx-auto px-6 py-3 flex items-center gap-3 text-sm' },
+              e('button', { onClick: onRestart, className: 'inline-flex items-center gap-1.5 text-ink-500 hover:text-ink-900' },
+                e(ArrowLeft, { size: 14 }), 'Start over'),
+              e('span', { className: 'text-ink-300 mx-1' }, '•'),
+              e('span', { className: 'text-ink-500' }, 'Viewing diagnostic for'),
+              e('span', { className: 'font-medium' }, persona.name),
+              e('div', { className: 'ml-auto flex items-center gap-2 text-ink-400 text-xs' },
+                e('span', null, 'Switch demo:'),
+                Object.values(PERSONAS).filter(p => p.id !== persona.id).map(p =>
+                  e('button', { key: p.id, onClick: () => onSwitchPersona(p.id), className: 'px-2 py-0.5 rounded border hairline hover:bg-cream-200' },
+                    p.name.split(' ')[0]),
+                ),
+              ),
+            ),
+          ),
+
+          // Header
+          e('div', { className: 'max-w-5xl mx-auto px-6 pt-14 pb-10' },
+            e('div', { className: 'text-xs uppercase tracking-[0.18em] text-amber-700 mb-4' },
+              'Your transition plan'),
+            e('h1', { className: 'font-serif text-4xl sm:text-5xl font-medium leading-[1.05] tracking-tight max-w-3xl' },
+              'For ', e('span', { className: 'italic' }, persona.name), ', ',
+              e('span', { className: 'text-ink-500' }, 'a plan that takes your last ', persona.tenure.split(',')[0], ' seriously.'),
+            ),
+            e('div', { className: 'mt-6 flex flex-wrap gap-2' },
+              e(Pill, null, persona.location),
+              e(Pill, null, 'Goal: $' + persona.financial_target.monthly_goal.toLocaleString() + '/mo'),
+              e(Pill, null, persona.hours),
+              e(Pill, null, persona.risk.split('—')[0].trim() + ' risk'),
+            ),
+          ),
+
+          // Section 1: Risk
+          e(Section, {
+            num: '01', title: 'Your displacement risk',
+            kicker: 'Honestly calibrated, not fear-mongering.',
+          },
+            e('div', { className: 'grid md:grid-cols-3 gap-6 mb-8' },
+              e(RiskBadge, { level: persona.risk_profile.level, color: persona.risk_profile.color }),
+              e('div', { className: 'md:col-span-2' },
+                e('p', { className: 'text-ink-700 leading-relaxed text-lg' }, persona.risk_profile.note),
+              ),
+            ),
+            e('div', { className: 'grid md:grid-cols-2 gap-6' },
+              e(RiskList, {
+                icon: AlertTriangle, title: 'Commoditizing', tint: 'rose',
+                items: persona.risk_profile.commoditizing,
+              }),
+              e(RiskList, {
+                icon: ShieldCheck, title: 'Still defensible', tint: 'forest',
+                items: persona.risk_profile.defensible,
+              }),
+            ),
+          ),
+
+          // Section 2: Three paths
+          e(Section, {
+            num: '02', title: 'Three viable paths',
+            kicker: 'Ranked by fit, market reachability, and time-to-first-dollar.',
+          },
+            e('div', { className: 'space-y-4' },
+              persona.three_paths.map((p, i) => e(PathCard, { key: i, path: p, isFirst: i === 0 })),
+            ),
+          ),
+
+          // Section 3: Recommended offer
+          e(Section, {
+            num: '03', title: 'Your recommended first offer',
+            kicker: 'Specific. Productized. Buyable.',
+          },
+            e(OfferCard, { offer: persona.recommended_offer }),
+          ),
+
+          // Section 4: 90-day plan
+          e(Section, {
+            num: '04', title: 'Your 90-day plan',
+            kicker: 'Week by week. Concrete actions. No “network more.”',
+          },
+            e('div', { className: 'space-y-px bg-cream-300 border hairline rounded-md overflow-hidden' },
+              persona.ninety_day_plan.map((phase, i) => e(PhaseRow, { key: i, phase, num: i + 1 })),
+            ),
+          ),
+
+          // Section 5: Prospects
+          e(Section, {
+            num: '05', title: 'Your first 25 prospects',
+            kicker: 'Real targets, with the signal that suggests they’d buy. Five shown; the rest unlock when you start your Command Center.',
+          },
+            e('div', { className: 'border hairline rounded-md overflow-hidden bg-cream-50' },
+              persona.first_prospects.map((p, i) => e(ProspectRow, { key: i, prospect: p })),
+              e('div', { className: 'px-5 py-4 bg-cream-200/60 flex items-center justify-between border-t hairline' },
+                e('div', { className: 'flex items-center gap-2 text-ink-500 text-sm' },
+                  e('span', { className: 'inline-block h-1.5 w-1.5 rounded-full bg-ink-300' }),
+                  '20 more prospects waiting in your Command Center',
+                ),
+                e('button', { onClick: onCommandCenter, className: 'text-amber-700 font-medium text-sm inline-flex items-center gap-1 hover:gap-1.5 transition-all' },
+                  'Unlock', e(ArrowRight, { size: 14 })),
+              ),
+            ),
+          ),
+
+          // Section 6: First 5 actions
+          e(Section, {
+            num: '06', title: 'Today’s first five actions',
+            kicker: 'You can start in the next hour.',
+          },
+            e('ol', { className: 'space-y-3' },
+              persona.first_5_actions.map((a, i) => e('li', { key: i, className: 'flex items-start gap-4 bg-cream-50 border hairline rounded-md p-5 hover:shadow-card transition' },
+                e('span', { className: 'font-serif text-2xl text-amber-700 font-medium leading-none mt-0.5' }, String(i + 1).padStart(2, '0')),
+                e('p', { className: 'text-ink-800 leading-relaxed flex-1' }, a),
+                e('button', { className: 'shrink-0 mt-0.5 px-2.5 py-1 rounded-md border hairline text-xs text-ink-700 hover:bg-cream-200' }, 'Mark done'),
+              )),
+            ),
+          ),
+
+          // CTA to command center
+          e('section', { className: 'border-t hairline bg-ink-900 text-cream-50' },
+            e('div', { className: 'max-w-5xl mx-auto px-6 py-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8' },
+              e('div', { className: 'max-w-xl' },
+                e('div', { className: 'text-xs uppercase tracking-[0.18em] text-amber-600 mb-3' }, 'Next'),
+                e('h2', { className: 'font-serif text-3xl sm:text-4xl font-medium tracking-tight leading-tight' },
+                  'Turn this plan into a working Command Center.'
+                ),
+                e('p', { className: 'mt-4 text-cream-300 leading-relaxed' },
+                  'Track prospects, draft outreach, send proposals, ship invoices, watch your first $1,000 land. $29/month after your first paying client. Free until then.'
+                ),
+              ),
+              e('button', {
+                onClick: onCommandCenter,
+                className: 'inline-flex items-center gap-2 bg-cream-50 text-ink-900 px-6 py-3.5 rounded-md font-medium hover:bg-amber-600 hover:text-cream-50 transition whitespace-nowrap',
+              }, 'See the Command Center', e(ArrowRight, { size: 18 })),
+            ),
+          ),
+        );
+      }
+
+      function Section({ num, title, kicker, children }) {
+        return e('section', { className: 'max-w-5xl mx-auto px-6 py-14 border-t hairline' },
+          e('div', { className: 'grid md:grid-cols-[120px_1fr] gap-8 md:gap-12' },
+            e('div', null,
+              e('div', { className: 'font-mono text-xs text-ink-400' }, num),
+              e('h2', { className: 'font-serif text-2xl sm:text-3xl font-medium leading-tight tracking-tight mt-2' }, title),
+              kicker && e('p', { className: 'mt-3 text-ink-500 text-sm leading-relaxed' }, kicker),
+            ),
+            e('div', null, children),
+          ),
+        );
+      }
+
+      function Pill({ children }) {
+        return e('span', { className: 'inline-flex items-center px-2.5 py-1 rounded-full bg-cream-200 text-ink-700 text-xs font-medium border hairline' }, children);
+      }
+
+      function RiskBadge({ level, color }) {
+        const tint = color === 'rose' ? 'bg-rose-700/10 text-rose-700 border-rose-700/30' :
+                     color === 'forest' ? 'bg-forest-700/10 text-forest-700 border-forest-700/30' :
+                     'bg-amber-700/10 text-amber-700 border-amber-700/30';
+        return e('div', { className: 'rounded-md border-2 ' + tint + ' p-5 flex flex-col' },
+          e('div', { className: 'text-xs uppercase tracking-[0.18em] opacity-80' }, 'Displacement risk'),
+          e('div', { className: 'font-serif text-3xl font-medium mt-1 leading-tight' }, level),
+          e('div', { className: 'mt-auto pt-4 text-xs opacity-70' }, 'Calibrated to your role, skills, and tenure'),
+        );
+      }
+
+      function RiskList({ icon: Icon, title, tint, items }) {
+        const c = tint === 'rose' ? 'text-rose-700' : tint === 'forest' ? 'text-forest-700' : 'text-amber-700';
+        return e('div', { className: 'border hairline rounded-md p-5 bg-cream-50' },
+          e('div', { className: 'flex items-center gap-2 mb-3 ' + c },
+            e(Icon, { size: 16 }),
+            e('h3', { className: 'font-medium text-sm uppercase tracking-wider' }, title),
+          ),
+          e('ul', { className: 'space-y-2.5' },
+            items.map((item, i) => e('li', { key: i, className: 'text-ink-700 text-[15px] leading-relaxed flex gap-2.5' },
+              e('span', { className: 'mt-2 h-1 w-1 rounded-full bg-ink-300 shrink-0' }),
+              e('span', null, item),
+            )),
+          ),
+        );
+      }
+
+      function PathCard({ path, isFirst }) {
+        return e('div', { className: 'border hairline rounded-md p-6 bg-cream-50 ' + (isFirst ? 'ring-1 ring-amber-700/20 shadow-card' : '') },
+          e('div', { className: 'flex items-start justify-between gap-4 mb-2' },
+            e('div', null,
+              e('div', { className: 'flex items-center gap-2 flex-wrap mb-1' },
+                e('span', { className: 'text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded ' + (isFirst ? 'bg-amber-700 text-cream-50' : 'bg-cream-200 text-ink-500') }, path.tag),
+              ),
+              e('h3', { className: 'font-serif text-2xl font-medium leading-tight tracking-tight' }, path.title),
+            ),
+            e('div', { className: 'shrink-0 text-right' },
+              e('div', { className: 'font-mono text-2xl font-medium text-ink-900' }, path.fit),
+              e('div', { className: 'text-[10px] uppercase tracking-wider text-ink-400' }, 'Fit'),
+            ),
+          ),
+          e('p', { className: 'mt-3 text-ink-700 leading-relaxed' }, path.pitch),
+          e('div', { className: 'mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm pt-4 border-t hairline' },
+            e('div', null,
+              e('div', { className: 'text-ink-400 text-[11px] uppercase tracking-wider mb-1' }, 'Why this fits'),
+              e('p', { className: 'text-ink-700' }, path.why),
+            ),
+            e('div', null,
+              e('div', { className: 'text-ink-400 text-[11px] uppercase tracking-wider mb-1' }, 'Market'),
+              e('p', { className: 'text-ink-700' }, path.market),
+            ),
+          ),
+        );
+      }
+
+      function OfferCard({ offer }) {
+        return e('div', { className: 'border hairline rounded-md bg-cream-50 overflow-hidden shadow-card' },
+          // Header
+          e('div', { className: 'p-7 border-b hairline bg-cream-100' },
+            e('div', { className: 'flex flex-wrap items-start justify-between gap-4' },
+              e('div', null,
+                e('div', { className: 'text-xs uppercase tracking-[0.18em] text-amber-700 mb-2' }, 'The offer'),
+                e('h3', { className: 'font-serif text-3xl font-medium tracking-tight leading-tight' }, offer.name),
+                e('p', { className: 'mt-2 text-ink-500 italic' }, offer.tagline),
+              ),
+              e('div', { className: 'text-right' },
+                e('div', { className: 'font-serif text-2xl font-medium' }, offer.price),
+                e('div', { className: 'text-xs text-ink-400 mt-0.5' }, offer.duration),
+              ),
+            ),
+          ),
+          // Body
+          e('div', { className: 'p-7 grid md:grid-cols-2 gap-8' },
+            e('div', null,
+              e('div', { className: 'text-[11px] uppercase tracking-wider text-ink-400 mb-3' }, 'What you deliver'),
+              e('ul', { className: 'space-y-2.5' },
+                offer.deliverables.map((d, i) => e('li', { key: i, className: 'flex items-start gap-2.5 text-[15px] text-ink-700 leading-relaxed' },
+                  e(Check, { size: 16, className: 'mt-1 text-forest-700 shrink-0' }), d,
+                )),
+              ),
+            ),
+            e('div', { className: 'space-y-5' },
+              e('div', null,
+                e('div', { className: 'text-[11px] uppercase tracking-wider text-ink-400 mb-2' }, 'Outcome promise'),
+                e('p', { className: 'text-ink-800 leading-relaxed' }, offer.outcome_promise),
+              ),
+              e('div', null,
+                e('div', { className: 'text-[11px] uppercase tracking-wider text-ink-400 mb-2' }, 'Who buys this'),
+                e('p', { className: 'text-ink-700 text-sm leading-relaxed' }, offer.target_customer),
+              ),
+              e('div', null,
+                e('div', { className: 'text-[11px] uppercase tracking-wider text-ink-400 mb-2' }, 'Why this offer'),
+                e('p', { className: 'text-ink-700 text-sm italic leading-relaxed' }, offer.why_this_offer),
+              ),
+            ),
+          ),
+          // Math footer
+          e('div', { className: 'px-7 py-5 bg-ink-900 text-cream-50 grid grid-cols-2 sm:grid-cols-3 gap-6' },
+            e(MathCell, { label: 'Clients to hit goal', value: offer.unit_math.clients_for_5k }),
+            e(MathCell, { label: 'Path', value: offer.unit_math.path, wide: true }),
+          ),
+        );
+      }
+      function MathCell({ label, value, wide }) {
+        return e('div', { className: wide ? 'sm:col-span-2' : '' },
+          e('div', { className: 'text-[10px] uppercase tracking-wider text-cream-300/70 mb-1' }, label),
+          e('div', { className: 'font-medium text-cream-50 text-sm leading-snug' }, value),
+        );
+      }
+
+      function PhaseRow({ phase, num }) {
+        const [open, setOpen] = useState(num === 1);
+        return e('div', { className: 'bg-cream-50' },
+          e('button', {
+            onClick: () => setOpen(o => !o),
+            className: 'w-full text-left px-6 py-5 flex items-start gap-6 hover:bg-cream-100 transition',
+          },
+            e('div', { className: 'font-mono text-xs text-ink-400 pt-1.5 w-12 shrink-0' }, phase.weeks),
+            e('div', { className: 'flex-1' },
+              e('h3', { className: 'font-serif text-xl font-medium' }, phase.title),
+              e('p', { className: 'text-ink-400 text-sm mt-0.5' }, phase.actions.length + ' actions'),
+            ),
+            e(open ? ChevronUp : ChevronDown, { size: 18, className: 'text-ink-400 mt-1' }),
+          ),
+          open && e('ul', { className: 'px-6 pb-6 pl-[100px] space-y-2 fade-in' },
+            phase.actions.map((a, i) => e('li', { key: i, className: 'flex items-start gap-3 text-ink-700 leading-relaxed text-[15px]' },
+              e('span', { className: 'mt-1.5 h-1 w-1 rounded-full bg-ink-300 shrink-0' }), a,
+            )),
+          ),
+        );
+      }
+
+      function ProspectRow({ prospect }) {
+        return e('div', { className: 'px-5 py-4 grid grid-cols-12 gap-4 items-center border-b hairline last:border-b-0 hover:bg-cream-100/50 transition' },
+          e('div', { className: 'col-span-4 sm:col-span-3' },
+            e('div', { className: 'font-medium text-ink-900' }, prospect.name),
+            e('div', { className: 'text-xs text-ink-400' }, prospect.kind + ' · ' + prospect.loc),
+          ),
+          e('div', { className: 'col-span-8 sm:col-span-7 text-sm text-ink-600' },
+            e('span', { className: 'text-amber-700 font-medium text-xs uppercase tracking-wider mr-2' }, 'Signal'),
+            prospect.signal,
+          ),
+          e('div', { className: 'hidden sm:flex col-span-2 justify-end' },
+            e('button', { className: 'text-xs px-2.5 py-1 rounded-md border hairline text-ink-700 hover:bg-cream-200' }, 'Draft outreach'),
+          ),
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Command Center (post-conversion preview)
+      // ─────────────────────────────────────────────────────────────────
+      function CommandCenter({ persona, onBack }) {
+        const [tab, setTab] = useState('today');
+        const goal = persona.financial_target.monthly_goal;
+        // simulated state
+        const earned = persona.id === 'sarah' ? 1500 : persona.id === 'marcus' ? 0 : persona.id === 'priya' ? 4500 : 0;
+        return e('section', { className: 'fade-in min-h-[600px]' },
+          // top bar
+          e('div', { className: 'border-b hairline bg-cream-50' },
+            e('div', { className: 'max-w-6xl mx-auto px-6 py-3 flex items-center gap-3 text-sm' },
+              e('button', { onClick: onBack, className: 'inline-flex items-center gap-1.5 text-ink-500 hover:text-ink-900' },
+                e(ArrowLeft, { size: 14 }), 'Back to diagnostic'),
+              e('span', { className: 'text-ink-300 mx-1' }, '•'),
+              e('span', { className: 'text-ink-500' }, 'Command Center for'),
+              e('span', { className: 'font-medium' }, persona.name),
+              e('div', { className: 'ml-auto inline-flex items-center gap-2 text-xs px-2 py-0.5 rounded-full bg-amber-700/10 text-amber-700 border border-amber-700/20' },
+                e(Sparkles, { size: 11 }),
+                'Preview — free until first paying client',
+              ),
+            ),
+          ),
+
+          e('div', { className: 'max-w-6xl mx-auto px-6 py-10' },
+            // Hero numbers
+            e('div', { className: 'grid grid-cols-2 lg:grid-cols-4 gap-px bg-cream-300 border hairline rounded-md overflow-hidden mb-8' },
+              e(StatCell, { label: 'First $1k progress', value: '$' + earned.toLocaleString(), sub: 'of $1,000', progress: Math.min(100, (earned / 1000) * 100) }),
+              e(StatCell, { label: 'Pipeline value', value: '$' + (persona.id === 'sarah' ? '6,750' : persona.id === 'marcus' ? '31,000' : persona.id === 'priya' ? '15,000' : '7,000'), sub: 'across active deals' }),
+              e(StatCell, { label: 'Active conversations', value: persona.id === 'sarah' ? '7' : persona.id === 'marcus' ? '4' : persona.id === 'priya' ? '3' : '2', sub: 'awaiting reply' }),
+              e(StatCell, { label: 'Days to first dollar', value: persona.financial_target.time_to_first_dollar, sub: 'projected' }),
+            ),
+
+            // Tabs
+            e('div', { className: 'flex items-center gap-1 border-b hairline mb-6' },
+              ['today', 'pipeline', 'helpers', 'money'].map(t =>
+                e('button', {
+                  key: t, onClick: () => setTab(t),
+                  className: 'px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition ' +
+                    (tab === t ? 'border-ink-900 text-ink-900' : 'border-transparent text-ink-400 hover:text-ink-700'),
+                }, t === 'today' ? 'Today' : t === 'pipeline' ? 'Pipeline' : t === 'helpers' ? 'AI helpers' : 'Money'),
+              ),
+            ),
+
+            // Tab content
+            tab === 'today' && e(TodayTab, { persona }),
+            tab === 'pipeline' && e(PipelineTab, { persona }),
+            tab === 'helpers' && e(HelpersTab, { persona }),
+            tab === 'money' && e(MoneyTab, { persona, earned, goal }),
+          ),
+
+          // footer trust strip
+          e('div', { className: 'border-t hairline bg-cream-100 py-8' },
+            e('div', { className: 'max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-6 text-sm' },
+              e('div', null,
+                e('div', { className: 'flex items-center gap-2 text-forest-700 mb-1 font-medium' },
+                  e(ShieldCheck, { size: 14 }), 'Nothing sent without your approval'),
+                e('p', { className: 'text-ink-500' }, 'AI helpers draft. You approve. No autonomous outreach, no surprise emails to clients, no auto-paid bills.'),
+              ),
+              e('div', null,
+                e('div', { className: 'flex items-center gap-2 text-forest-700 mb-1 font-medium' },
+                  e(BadgeCheck, { size: 14 }), 'Your data, your business'),
+                e('p', { className: 'text-ink-500' }, 'Your prospects, proposals, and client info stay yours. Export anything in one click. Cancel and take it with you.'),
+              ),
+              e('div', null,
+                e('div', { className: 'flex items-center gap-2 text-forest-700 mb-1 font-medium' },
+                  e(DollarSign, { size: 14 }), 'Free until first paying client'),
+                e('p', { className: 'text-ink-500' }, '$29/mo starts when your first invoice clears. Cancel any time. $79/mo unlocks contracts, proposals, and integrations.'),
+              ),
+            ),
+          ),
+        );
+      }
+
+      function StatCell({ label, value, sub, progress }) {
+        return e('div', { className: 'bg-cream-50 p-5' },
+          e('div', { className: 'text-[11px] uppercase tracking-wider text-ink-400' }, label),
+          e('div', { className: 'font-serif text-3xl font-medium mt-1 tracking-tight' }, value),
+          e('div', { className: 'text-xs text-ink-500 mt-0.5' }, sub),
+          progress !== undefined && e('div', { className: 'mt-3 h-1.5 rounded-full bg-cream-200 overflow-hidden' },
+            e('div', {
+              className: 'h-full bg-amber-700 transition-all',
+              style: { width: progress + '%' },
+            }),
+          ),
+        );
+      }
+
+      function TodayTab({ persona }) {
+        const tasks = [
+          { kind: 'outreach', text: 'Send first 5 outreach emails (drafts ready)', meta: 'Pipeline Helper drafted yesterday', urgent: true },
+          { kind: 'call', text: 'Discovery call: Aria Medspa at 2:00pm', meta: 'Prep doc waiting', urgent: true },
+          { kind: 'follow', text: 'Follow up with Bright Smile Dental (3 days since reply)', meta: 'Suggested by Pipeline Helper' },
+          { kind: 'admin', text: 'Reserve sarahchencx.com', meta: 'From your first-5 actions' },
+          { kind: 'admin', text: 'Set Stripe payment link (10 min)', meta: 'Needed before first invoice' },
+        ];
+        return e('div', { className: 'grid lg:grid-cols-3 gap-6' },
+          e('div', { className: 'lg:col-span-2 space-y-3' },
+            e('div', { className: 'flex items-center justify-between mb-1' },
+              e('h2', { className: 'font-serif text-2xl font-medium' }, 'Today, in order of leverage'),
+              e('span', { className: 'text-xs text-ink-400' }, tasks.length + ' actions · ~2h total'),
+            ),
+            tasks.map((t, i) => e('div', { key: i, className: 'border hairline rounded-md p-4 bg-cream-50 flex items-start gap-3 hover:shadow-card transition' },
+              e('input', { type: 'checkbox', className: 'mt-1 h-4 w-4 accent-amber-700' }),
+              e('div', { className: 'flex-1' },
+                e('div', { className: 'flex items-center gap-2 flex-wrap' },
+                  e('span', { className: 'font-medium text-ink-900' }, t.text),
+                  t.urgent && e('span', { className: 'text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-700/15 text-amber-700 font-medium' }, 'today'),
+                ),
+                e('div', { className: 'text-xs text-ink-400 mt-0.5' }, t.meta),
+              ),
+              t.kind === 'outreach' && e('button', { className: 'shrink-0 text-xs px-2.5 py-1 rounded-md bg-ink-900 text-cream-50 hover:bg-amber-700' }, 'Review drafts'),
+              t.kind === 'call' && e('button', { className: 'shrink-0 text-xs px-2.5 py-1 rounded-md border hairline hover:bg-cream-200' }, 'Open prep'),
+            )),
+          ),
+          e('div', { className: 'space-y-4' },
+            // Drafts preview
+            e('div', { className: 'border hairline rounded-md bg-cream-50' },
+              e('div', { className: 'px-4 py-3 border-b hairline flex items-center justify-between' },
+                e('div', { className: 'flex items-center gap-2' },
+                  e(Pen, { size: 14, className: 'text-amber-700' }),
+                  e('h3', { className: 'font-medium text-sm' }, 'Drafts ready for review'),
+                ),
+                e('span', { className: 'text-xs text-ink-400' }, '5 outreach · 2 follow-ups'),
+              ),
+              e('div', { className: 'p-4 bg-cream-100 border-b hairline' },
+                e('div', { className: 'text-[11px] uppercase tracking-wider text-ink-400 mb-1' }, 'To: owner@ariamedspa.com'),
+                e('div', { className: 'text-sm text-ink-800 italic leading-relaxed' },
+                  '“Hey — I noticed an unanswered voicemail when I called Wednesday at 5:42pm. I help medspas like Aria recover after-hours bookings…”'),
+                e('div', { className: 'mt-3 flex items-center gap-2' },
+                  e('button', { className: 'text-xs px-2.5 py-1 rounded-md bg-ink-900 text-cream-50' }, 'Send'),
+                  e('button', { className: 'text-xs px-2.5 py-1 rounded-md border hairline' }, 'Edit'),
+                  e('button', { className: 'text-xs text-ink-500 hover:text-ink-900' }, 'Show full draft'),
+                ),
+              ),
+              e('div', { className: 'p-4 text-xs text-ink-500 italic flex items-center gap-2' },
+                e(Sparkles, { size: 12, className: 'text-amber-700' }),
+                'Pipeline Helper drafts — you decide what sends.'),
+            ),
+          ),
+        );
+      }
+
+      function PipelineTab({ persona }) {
+        const stages = [
+          { name: 'Cold', count: 18, color: 'bg-cream-300', items: ['+ 18 prospects loaded from your diagnostic'] },
+          { name: 'Contacted', count: 7, color: 'bg-cream-300', items: persona.first_prospects.slice(0,3).map(p => p.name) },
+          { name: 'Replied', count: 3, color: 'bg-amber-700/15', items: persona.first_prospects.slice(0,2).map(p => p.name + ' — wants a call') },
+          { name: 'Call booked', count: 2, color: 'bg-amber-700/25', items: ['Aria Medspa — Thu 2pm', 'Lake Hills Chiro — Fri 11am'] },
+          { name: 'Proposal sent', count: 1, color: 'bg-forest-700/15', items: ['Glow Aesthetic — $1,500 setup'] },
+          { name: 'Closed won', count: 0, color: 'bg-forest-700/25', items: ['Your first paying client lives here'] },
+        ];
+        return e('div', null,
+          e('div', { className: 'flex items-center justify-between mb-5' },
+            e('h2', { className: 'font-serif text-2xl font-medium' }, 'Pipeline'),
+            e('button', { className: 'text-xs px-2.5 py-1 rounded-md border hairline hover:bg-cream-200 inline-flex items-center gap-1' },
+              e(Plus, { size: 12 }), 'Add prospect'),
+          ),
+          e('div', { className: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3' },
+            stages.map((s, i) => e('div', { key: i, className: 'border hairline rounded-md bg-cream-50 min-h-[280px] flex flex-col' },
+              e('div', { className: 'px-3 py-2 border-b hairline flex items-center justify-between' },
+                e('div', { className: 'flex items-center gap-1.5' },
+                  e('span', { className: 'h-2 w-2 rounded-full ' + s.color }),
+                  e('span', { className: 'text-xs font-medium uppercase tracking-wider text-ink-700' }, s.name),
+                ),
+                e('span', { className: 'text-xs font-mono text-ink-400' }, s.count),
+              ),
+              e('div', { className: 'p-2 space-y-1.5 flex-1' },
+                s.items.map((it, j) => e('div', { key: j, className: 'text-xs bg-cream-100 border hairline rounded p-2 text-ink-700' }, it)),
+              ),
+            )),
+          ),
+        );
+      }
+
+      function HelpersTab({ persona }) {
+        const helpers = [
+          { icon: Search, name: 'Pipeline Helper', live: true, body: 'Researches prospects, drafts outreach, suggests follow-ups. You approve every send.', stat: '12 drafts this week' },
+          { icon: MessageSquare, name: 'Discovery Prep', live: true, body: 'Reads the prospect, writes 8 calibrated questions, drafts your opening 60 seconds.', stat: '3 prep docs ready' },
+          { icon: FileText, name: 'Proposal Builder', live: true, body: 'Generates a one-page proposal from your offer template and the call notes. You edit before sending.', stat: '1 awaiting your review' },
+          { icon: Receipt, name: 'Invoice + Payment', live: true, body: 'Builds invoices from your SOW. Adds Stripe payment link. You hit send.', stat: '$1,500 invoice draft ready' },
+          { icon: Wallet, name: 'Tax Set-Aside', live: true, body: 'Calculates what to set aside per payment (federal + state). Suggests transfers. Doesn\'t move money on its own.', stat: '~28% of next deposit' },
+          { icon: BookOpen, name: 'Contract Helper', live: false, body: 'Generate plain-English SOWs and MSAs from your offers. Coming in 4 weeks.', stat: 'on the roadmap' },
+        ];
+        return e('div', null,
+          e('div', { className: 'flex items-center justify-between mb-5' },
+            e('h2', { className: 'font-serif text-2xl font-medium' }, 'AI helpers'),
+            e('span', { className: 'text-xs text-ink-500 inline-flex items-center gap-1.5' },
+              e(ShieldCheck, { size: 13, className: 'text-forest-700' }),
+              'Every action requires your approval'),
+          ),
+          e('div', { className: 'grid md:grid-cols-2 gap-3' },
+            helpers.map((h, i) => e('div', { key: i, className: 'border hairline rounded-md p-5 bg-cream-50' + (!h.live ? ' opacity-60' : '') },
+              e('div', { className: 'flex items-start justify-between mb-2' },
+                e('div', { className: 'h-9 w-9 rounded-md bg-cream-200 grid place-items-center text-amber-700' },
+                  e(h.icon, { size: 17 }),
+                ),
+                h.live
+                  ? e('span', { className: 'text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-forest-700/15 text-forest-700 font-medium' }, 'Live')
+                  : e('span', { className: 'text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-cream-300 text-ink-500' }, 'Soon'),
+              ),
+              e('h3', { className: 'font-serif text-lg font-medium mt-2' }, h.name),
+              e('p', { className: 'text-sm text-ink-500 leading-relaxed mt-1' }, h.body),
+              e('div', { className: 'mt-3 pt-3 border-t hairline text-xs text-ink-700 font-mono' }, h.stat),
+            )),
+          ),
+          e('p', { className: 'mt-6 text-sm text-ink-500 italic max-w-xl' },
+            'Note: SelfEmployed.app intentionally doesn’t do autonomous outreach, autonomous contracts, or autonomous money movement. Trust is earned in single approvals, not all-at-once permissions.'),
+        );
+      }
+
+      function MoneyTab({ persona, earned, goal }) {
+        return e('div', { className: 'grid lg:grid-cols-3 gap-6' },
+          e('div', { className: 'lg:col-span-2 space-y-4' },
+            e('h2', { className: 'font-serif text-2xl font-medium' }, 'This month'),
+            e('div', { className: 'border hairline rounded-md bg-cream-50 p-6' },
+              e('div', { className: 'flex items-end justify-between mb-3' },
+                e('div', null,
+                  e('div', { className: 'text-xs uppercase tracking-wider text-ink-400' }, 'Toward $' + goal.toLocaleString() + ' goal'),
+                  e('div', { className: 'font-serif text-4xl font-medium mt-1' }, '$' + earned.toLocaleString()),
+                ),
+                e('div', { className: 'text-xs text-ink-500 text-right' },
+                  e('div', null, Math.round((earned / goal) * 100) + '% of goal'),
+                  e('div', { className: 'text-ink-400 mt-0.5' }, '~' + Math.max(0, Math.ceil((goal - earned) / persona.financial_target.avg_setup_price)) + ' more clients to hit it'),
+                ),
+              ),
+              e('div', { className: 'h-3 rounded-full bg-cream-200 overflow-hidden' },
+                e('div', { className: 'h-full bg-amber-700 transition-all', style: { width: Math.min(100, (earned / goal) * 100) + '%' } }),
+              ),
+            ),
+            e('div', { className: 'grid sm:grid-cols-3 gap-3' },
+              e(MiniStat, { label: 'Invoiced', value: '$' + earned.toLocaleString() }),
+              e(MiniStat, { label: 'Set aside (tax)', value: '$' + Math.round(earned * 0.28).toLocaleString() }),
+              e(MiniStat, { label: 'Take-home target', value: '$' + Math.round(earned * 0.72).toLocaleString() }),
+            ),
+            e('div', { className: 'border hairline rounded-md bg-cream-50' },
+              e('div', { className: 'px-5 py-3 border-b hairline flex items-center justify-between' },
+                e('h3', { className: 'font-medium text-sm' }, 'Recent activity'),
+                e('button', { className: 'text-xs text-ink-500' }, 'View all'),
+              ),
+              [
+                { icon: DollarSign, text: 'Invoice paid — Glow Aesthetic Clinic', amount: '+$1,500', when: '2 days ago', positive: true },
+                { icon: Send, text: 'Invoice sent — Aria Medspa setup', amount: '$1,500', when: '4 days ago' },
+                { icon: Coffee, text: 'Expense — Twilio (April)', amount: '−$45', when: '6 days ago' },
+                { icon: Wallet, text: 'Tax set-aside transfer', amount: '−$420', when: '8 days ago' },
+              ].map((r, i) => e('div', { key: i, className: 'px-5 py-3 flex items-center gap-3 border-b hairline last:border-b-0' },
+                e('div', { className: 'h-8 w-8 rounded-full bg-cream-200 grid place-items-center' }, e(r.icon, { size: 14, className: r.positive ? 'text-forest-700' : 'text-ink-500' })),
+                e('div', { className: 'flex-1' },
+                  e('div', { className: 'text-sm text-ink-900' }, r.text),
+                  e('div', { className: 'text-xs text-ink-400' }, r.when),
+                ),
+                e('div', { className: 'font-mono text-sm ' + (r.positive ? 'text-forest-700 font-medium' : 'text-ink-700') }, r.amount),
+              )),
+            ),
+          ),
+          e('div', { className: 'space-y-4' },
+            e('div', { className: 'border hairline rounded-md bg-cream-50 p-5' },
+              e('h3', { className: 'font-medium text-sm mb-3' }, 'Quarterly tax estimate'),
+              e('div', { className: 'font-serif text-3xl font-medium' }, '$' + Math.round(earned * 0.28 * 3).toLocaleString()),
+              e('div', { className: 'text-xs text-ink-400 mt-1' }, 'Projected, due Jun 15'),
+              e('button', { className: 'mt-4 w-full text-xs px-3 py-2 rounded-md border hairline hover:bg-cream-200' }, 'View calculation'),
+            ),
+            e('div', { className: 'border hairline rounded-md bg-cream-50 p-5' },
+              e('h3', { className: 'font-medium text-sm mb-3' }, 'When you should incorporate'),
+              e('p', { className: 'text-xs text-ink-500 leading-relaxed' }, 'You don’t need an LLC yet. We’ll let you know when revenue, liability exposure, or tax savings tip the math.'),
+              e('div', { className: 'mt-4 pt-3 border-t hairline text-xs text-ink-700' },
+                e('span', { className: 'text-ink-400' }, 'Suggested at:'),
+                e('span', { className: 'ml-2 font-medium' }, '$15k earned, or first signed contract over $5k'),
+              ),
+            ),
+          ),
+        );
+      }
+      function MiniStat({ label, value }) {
+        return e('div', { className: 'border hairline rounded-md bg-cream-50 p-4' },
+          e('div', { className: 'text-[11px] uppercase tracking-wider text-ink-400' }, label),
+          e('div', { className: 'font-serif text-2xl font-medium mt-1' }, value),
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Footer
+      // ─────────────────────────────────────────────────────────────────
+      function Footer() {
+        return e('footer', { className: 'border-t hairline bg-cream-50 mt-0' },
+          e('div', { className: 'max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-sm text-ink-500' },
+            e('div', { className: 'flex items-center gap-2' },
+              e('div', { className: 'h-5 w-5 bg-ink-900 text-cream-50 grid place-items-center rounded-sm font-serif text-[10px] font-semibold' }, 'S'),
+              e('span', { className: 'font-serif text-ink-900 font-medium' }, 'SelfEmployed.app'),
+              e('span', { className: 'text-ink-300 mx-1' }, '—'),
+              e('span', null, 'Interactive prototype, May 2026'),
+            ),
+            e('div', { className: 'flex items-center gap-5' },
+              e('a', { href: '#', className: 'hover:text-ink-900' }, 'How it works'),
+              e('a', { href: '#', className: 'hover:text-ink-900' }, 'Pricing'),
+              e('a', { href: '#', className: 'hover:text-ink-900' }, 'About'),
+              e('a', { href: '#', className: 'hover:text-ink-900' }, 'Privacy'),
+            ),
+          ),
+        );
+      }
+
+      createRoot(document.getElementById('root')).render(e(App));
+    </script>
+  </body>
+</html>
